@@ -8,8 +8,9 @@ button?.addEventListener('click', event => {
     const device = (document.getElementById('device') as HTMLSelectElement)?.value as DeviceType;
     event.preventDefault();
     
-    load(device);
-    img_classifier(device);
-
+    Promise.allSettled([
+        load(device),
+        img_classifier(device)
+    ]);
 })
 

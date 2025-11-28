@@ -46,6 +46,12 @@ export async function load(device: DeviceType = "wasm") {
 }
 
 export async function img_classifier(device: DeviceType = "wasm") {
+  const elem = document.getElementById("output2")!;
+  elem.textContent = '';
+  const status = document.createElement('span');
+  elem.appendChild(status);
+
+  status.textContent = 'Loading model...';
   const classifier = await pipeline(
     "image-classification",
     "onnx-community/mobilenetv4_conv_small.e2400_r224_in1k",
@@ -54,15 +60,17 @@ export async function img_classifier(device: DeviceType = "wasm") {
 
   const url =
     "https://huggingface.co/datasets/Xenova/transformers.js-docs/resolve/main/tiger.jpg";
-  const elem = document.getElementById("output2")!;
 
   let img = document.createElement("img");
   img.src = url;
+  img.width = 400;
   elem.appendChild(img);
 
+  status.textContent = "Classifying image...";
   const output = await classifier(url);
 
   let out_elem = document.createElement("span");
   out_elem.textContent = JSON.stringify(output, undefined, 2);
+  status.textContent = '';
   elem.appendChild(out_elem);
 }
