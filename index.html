@@ -7,13 +7,18 @@
     <title>web-llm</title>
   </head>
   <body>
-    <select id="device">
-      <option>webgpu</option>
-      <option>wasm</option>
-      <option>cpu</option>
-    </select>
-    <p id="output"></p>
-    <pre><code id="output2"></code></pre>
+    <div class="output_wrapper">
+      <select id="device">
+        <option>webgpu</option>
+        <option>wasm</option>
+        <option>cpu</option>
+      </select>
+      <button id="magic">Magic</button>
+      <h2>Text Generation</h2>
+      <p id="output"></p>
+      <h2>Image Classification</h2>
+      <pre><code id="output2"></code></pre>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

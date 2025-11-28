@@ -1,9 +1,12 @@
 import { pipeline, type DeviceType } from "@huggingface/transformers";
 
 export async function load(device: DeviceType = "wasm") {
+  const output_element = document.getElementById("output")!;
+
   // Allocate pipeline
   let generator: any = undefined;
   try {
+    output_element.textContent = "Loading model...";
     generator = await pipeline(
       "text-generation",
       "onnx-community/Qwen2.5-0.5B-Instruct",
@@ -11,12 +14,11 @@ export async function load(device: DeviceType = "wasm") {
     );
   } catch (error) {
     console.log("Error occurred while loading model:", error);
-    const output_element = document.getElementById("output")!;
     output_element.textContent =
       "Error occurred while loading model\n" + JSON.stringify(error);
     return;
   }
-  console.log("load_model");
+  
   const messages = [
     { role: "system", content: "You are a senior Angular developer" },
     {
@@ -25,9 +27,9 @@ export async function load(device: DeviceType = "wasm") {
     },
   ];
 
+  output_element.textContent = "Prompting model...";
   const output = await generator(messages, { max_new_tokens: 1024 });
 
-  const output_element = document.getElementById("output")!;
 
   const system = document.createElement("p");
   const user = document.createElement("p");
@@ -37,6 +39,7 @@ export async function load(device: DeviceType = "wasm") {
   user.textContent = output[0].generated_text[1].content;
   assistant.innerHTML = output[0].generated_text[2].content;
 
+  output_element.textContent = '';
   output_element.appendChild(system);
   output_element.appendChild(user);
   output_element.appendChild(assistant);
