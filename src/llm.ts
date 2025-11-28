@@ -1,13 +1,13 @@
-import { pipeline } from "@huggingface/transformers";
+import { pipeline, type DeviceType } from "@huggingface/transformers";
 
-export async function load() {
+export async function load(device: DeviceType = "wasm") {
   // Allocate pipeline
   let generator: any = undefined;
   try {
     generator = await pipeline(
       "text-generation",
       "onnx-community/Qwen2.5-0.5B-Instruct",
-      { dtype: "q4", device: "wasm" },
+      { dtype: "q4", device },
     );
   } catch (error) {
     console.log("Error occurred while loading model:", error);
@@ -42,11 +42,11 @@ export async function load() {
   output_element.appendChild(assistant);
 }
 
-export async function img_classifier() {
+export async function img_classifier(device: DeviceType = "wasm") {
   const classifier = await pipeline(
     "image-classification",
     "onnx-community/mobilenetv4_conv_small.e2400_r224_in1k",
-    { device: "wasm" },
+    { device },
   );
 
   const url =
