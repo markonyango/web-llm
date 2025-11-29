@@ -3,7 +3,6 @@
   line-height: 1.5;
   font-weight: 400;
 
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -31,3 +30,10 @@ body {
   flex-direction: column;
   gap: 2em;
 }
+
+#prompt_form {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+

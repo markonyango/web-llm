@@ -1,6 +1,14 @@
-import { pipeline, type DeviceType } from "@huggingface/transformers";
+import {
+  pipeline,
+  type DeviceType,
+  type TextGenerationOutput,
+} from "@huggingface/transformers";
 
-export async function load(device: DeviceType = "wasm") {
+export async function load(
+  device: DeviceType = "wasm",
+  system_prompt: string,
+  user_prompt: string,
+) {
   const output_element = document.getElementById("output")!;
 
   // Allocate pipeline
@@ -10,7 +18,7 @@ export async function load(device: DeviceType = "wasm") {
     generator = await pipeline(
       "text-generation",
       "onnx-community/Qwen2.5-0.5B-Instruct",
-      { dtype: "q4", device },
+      { dtype: "q4", device, progress_callback: console.log },
     );
   } catch (error) {
     console.log("Error occurred while loading model:", error);
@@ -18,18 +26,22 @@ export async function load(device: DeviceType = "wasm") {
       "Error occurred while loading model\n" + JSON.stringify(error);
     return;
   }
-  
+
   const messages = [
-    { role: "system", content: "You are a senior Angular developer" },
+    {
+      role: "system",
+      content: system_prompt,
+    },
     {
       role: "user",
-      content: "What is the difference between a Promise and an Observable?",
+      content: user_prompt,
     },
   ];
 
   output_element.textContent = "Prompting model...";
-  const output = await generator(messages, { max_new_tokens: 1024 });
-
+  const output = (await generator(messages, {
+    max_new_tokens: 1024,
+  })) as TextGenerationOutput[];
 
   const system = document.createElement("p");
   const user = document.createElement("p");
@@ -39,7 +51,7 @@ export async function load(device: DeviceType = "wasm") {
   user.textContent = output[0].generated_text[1].content;
   assistant.innerHTML = output[0].generated_text[2].content;
 
-  output_element.textContent = '';
+  output_element.textContent = "";
   output_element.appendChild(system);
   output_element.appendChild(user);
   output_element.appendChild(assistant);
@@ -47,11 +59,11 @@ export async function load(device: DeviceType = "wasm") {
 
 export async function img_classifier(device: DeviceType = "wasm") {
   const elem = document.getElementById("output2")!;
-  elem.textContent = '';
-  const status = document.createElement('span');
+  elem.textContent = "";
+  const status = document.createElement("span");
   elem.appendChild(status);
 
-  status.textContent = 'Loading model...';
+  status.textContent = "Loading model...";
   const classifier = await pipeline(
     "image-classification",
     "onnx-community/mobilenetv4_conv_small.e2400_r224_in1k",
@@ -71,6 +83,6 @@ export async function img_classifier(device: DeviceType = "wasm") {
 
   let out_elem = document.createElement("span");
   out_elem.textContent = JSON.stringify(output, undefined, 2);
-  status.textContent = '';
+  status.textContent = "";
   elem.appendChild(out_elem);
 }
